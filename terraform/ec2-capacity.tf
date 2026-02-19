@@ -29,10 +29,23 @@ resource "aws_autoscaling_group" "ecs_asg" {
   desired_capacity     = 1
   max_size             = 1
   min_size             = 1
-  vpc_zone_identifier  = []
+ vpc_zone_identifier = [aws_subnet.public.id]
 
   launch_template {
     id      = aws_launch_template.ecs_lt.id
     version = "$Latest"
   }
+}
+resource "aws_ecs_capacity_provider" "cp" {
+  name = "strapi-capacity"
+
+  auto_scaling_group_provider {
+    auto_scaling_group_arn = aws_autoscaling_group.ecs_asg.arn
+  }
+}
+
+resource "aws_ecs_cluster_capacity_providers" "attach" {
+  cluster_name = aws_ecs_cluster.strapi_cluster.name
+
+  capacity_providers = [aws_ecs_capacity_provider.cp.name]
 }
