@@ -1,61 +1,151 @@
-# 🚀 Getting started with Strapi
+# 🚀 Task-7 — Automated Strapi Deployment on AWS ECS (EC2) using Terraform & GitHub Actions
 
-Strapi comes with a full featured [Command Line Interface](https://docs.strapi.io/dev-docs/cli) (CLI) which lets you scaffold and manage your project in seconds.
+## 📌 Project Overview
 
-### `develop`
+This project demonstrates a **fully automated CI/CD pipeline** to deploy a Strapi CMS application on **AWS ECS (EC2 launch type)**.
 
-Start your Strapi application with autoReload enabled. [Learn more](https://docs.strapi.io/dev-docs/cli#strapi-develop)
+Every time code is pushed to the `main` branch, the system automatically:
 
-```
-npm run develop
-# or
-yarn develop
-```
+1. Builds a Docker image
+2. Tags the image using commit SHA
+3. Pushes the image to Amazon ECR
+4. Registers a new ECS Task Definition revision
+5. Deploys the updated container to ECS service
 
-### `start`
-
-Start your Strapi application with autoReload disabled. [Learn more](https://docs.strapi.io/dev-docs/cli#strapi-start)
-
-```
-npm run start
-# or
-yarn start
-```
-
-### `build`
-
-Build your admin panel. [Learn more](https://docs.strapi.io/dev-docs/cli#strapi-build)
-
-```
-npm run build
-# or
-yarn build
-```
-
-## ⚙️ Deployment
-
-Strapi gives you many possible deployment options for your project including [Strapi Cloud](https://cloud.strapi.io). Browse the [deployment section of the documentation](https://docs.strapi.io/dev-docs/deployment) to find the best solution for your use case.
-
-```
-yarn strapi deploy
-```
-
-## 📚 Learn more
-
-- [Resource center](https://strapi.io/resource-center) - Strapi resource center.
-- [Strapi documentation](https://docs.strapi.io) - Official Strapi documentation.
-- [Strapi tutorials](https://strapi.io/tutorials) - List of tutorials made by the core team and the community.
-- [Strapi blog](https://strapi.io/blog) - Official Strapi blog containing articles made by the Strapi team and the community.
-- [Changelog](https://strapi.io/changelog) - Find out about the Strapi product updates, new features and general improvements.
-
-Feel free to check out the [Strapi GitHub repository](https://github.com/strapi/strapi). Your feedback and contributions are welcome!
-
-## ✨ Community
-
-- [Discord](https://discord.strapi.io) - Come chat with the Strapi community including the core team.
-- [Forum](https://forum.strapi.io/) - Place to discuss, ask questions and find answers, show your Strapi project and get feedback or just talk with other Community members.
-- [Awesome Strapi](https://github.com/strapi/awesome-strapi) - A curated list of awesome things related to Strapi.
+No manual deployment steps are required.
 
 ---
 
-<sub>🤫 Psst! [Strapi is hiring](https://strapi.io/careers).</sub>
+## 🏗️ Architecture
+
+Developer → GitHub → GitHub Actions → Docker Build → Amazon ECR → ECS Task Revision → ECS Service Deployment → Running Container
+
+---
+
+## 🛠️ Technologies Used
+
+* **Strapi CMS**
+* **Docker**
+* **AWS ECS (EC2 launch type)**
+* **Amazon ECR**
+* **Terraform (Infrastructure as Code)**
+* **GitHub Actions (CI/CD Automation)**
+
+---
+
+## 📂 Repository Structure
+
+```
+strapi-ecs-deploy/
+│
+├── .github/workflows/
+│   └── deploy.yml          # CI/CD pipeline
+│
+├── terraform/              # Infrastructure configuration
+│
+├── config/                 # Strapi configuration
+├── src/                    # Application source code
+├── Dockerfile              # Container build file
+├── docker-compose.yml      # Local development
+├── package.json
+└── README.md
+```
+
+---
+
+## ⚙️ CI/CD Workflow
+
+### Trigger
+
+Push to `main` branch
+
+### Pipeline Steps
+
+1. Checkout repository
+2. Authenticate with AWS
+3. Build Docker image
+4. Push image to ECR
+5. Fetch current ECS task definition
+6. Replace image with new tag
+7. Register new task revision
+8. Force new ECS deployment
+
+---
+
+## 🔄 Deployment Flow
+
+```
+git push
+   ↓
+GitHub Actions Triggered
+   ↓
+Docker Image Build
+   ↓
+Push to Amazon ECR
+   ↓
+New ECS Task Revision Created
+   ↓
+ECS Service Auto Deploy
+   ↓
+Application Updated
+```
+
+---
+
+## 📦 Docker Image Tagging Strategy
+
+Images are tagged using commit SHA:
+
+```
+<account-id>.dkr.ecr.<region>.amazonaws.com/strapi-ecs-repo:<commit-sha>
+```
+
+This ensures:
+
+* Version tracking
+* Rollback capability
+* Unique deployments
+
+---
+
+## 🌐 Result
+
+A complete automated deployment pipeline:
+
+✔ Zero manual deployment
+✔ Automatic container updates
+✔ Version controlled releases
+✔ Production-ready workflow
+
+---
+
+## 🧪 Verification
+
+Deployment success can be verified by:
+
+* GitHub Actions → Successful workflow run
+* Amazon ECR → New image tag
+* ECS → New task revision
+* ECS Service → Steady state running task
+
+---
+
+## 🎯 Key Learning Outcomes
+
+* Implemented Infrastructure as Code using Terraform
+* Created production-style CI/CD pipeline
+* Integrated GitHub Actions with AWS
+* Automated container deployments
+* Implemented rolling updates in ECS
+
+---
+
+## 👨‍💻 Author
+
+**Mohammad Izan Khan**
+
+---
+
+## 📢 Conclusion
+
+This project implements a real-world DevOps workflow where code commits automatically trigger build, versioning, container registry updates, and live production deployment without human intervention.
